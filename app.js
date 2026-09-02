@@ -17,43 +17,40 @@ const GENERATIONS = [
   { gen: "Gen IX", start: 906, end: 1025 }
 ];
 
-// Reliable Smogon GitHub Raw CDN (CORS & hotlink friendly)
-const TRAINER_BASE = "https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/mods/gen5/sprites/trainers/";
+// Verified PokéAPI GitHub Raw Repository (CORS-friendly, no rate-limits)
+const TRAINER_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/";
 
-// Comprehensive list: Classic Route NPCs + Protagonists + Rivals + Champions
 const TRAINER_AVATARS = [
-  // Route Trainers & Common NPCs
+  // Route NPCs
   { name: "Youngster", file: "youngster.png" },
   { name: "Lass", file: "lass.png" },
-  { name: "Bug Catcher", file: "bugcatcher.png" },
+  { name: "Bug Catcher", file: "bug-catcher.png" },
   { name: "Hiker", file: "hiker.png" },
   { name: "Fisherman", file: "fisherman.png" },
-  { name: "Ace Trainer (M)", file: "acetrainer.png" },
-  { name: "Ace Trainer (F)", file: "acetrainerf.png" },
-  { name: "Hex Maniac", file: "hexmaniac.png" },
-  { name: "Black Belt", file: "blackbelt.png" },
-  { name: "Swimmer (M)", file: "swimmer.png" },
-  { name: "Swimmer (F)", file: "swimmerf.png" },
-  { name: "Psychic", file: "psychic.png" },
+  { name: "Ace Trainer (M)", file: "ace-trainer-m.png" },
+  { name: "Ace Trainer (F)", file: "ace-trainer-f.png" },
+  { name: "Black Belt", file: "black-belt.png" },
+  { name: "Swimmer (M)", file: "swimmer-m.png" },
+  { name: "Swimmer (F)", file: "swimmer-f.png" },
+  { name: "Psychic (M)", file: "psychic-m.png" },
   { name: "Scientist", file: "scientist.png" },
   { name: "Sailor", file: "sailor.png" },
-  { name: "Bird Keeper", file: "birdkeeper.png" },
+  { name: "Bird Keeper", file: "bird-keeper.png" },
   { name: "Camper", file: "camper.png" },
   { name: "Picnicker", file: "picnicker.png" },
   { name: "Pokemaniac", file: "pokemaniac.png" },
-  { name: "Super Nerd", file: "supernerd.png" },
+  { name: "Super Nerd", file: "super-nerd.png" },
   { name: "Beauty", file: "beauty.png" },
   { name: "Gentleman", file: "gentleman.png" },
   { name: "Biker", file: "biker.png" },
-  { name: "Cue Ball", file: "cueball.png" },
   { name: "Burglar", file: "burglar.png" },
   { name: "Juggler", file: "juggler.png" },
   { name: "Guitarist", file: "guitarist.png" },
-  { name: "Battle Girl", file: "battlegirl.png" },
-  { name: "Dragon Tamer", file: "dragontamer.png" },
-  { name: "Rocket Grunt", file: "teamrocket.png" },
+  { name: "Battle Girl", file: "battle-girl.png" },
+  { name: "Dragon Tamer", file: "dragon-tamer.png" },
+  { name: "Rocket Grunt", file: "team-rocket-grunt-m.png" },
 
-  // Protagonists & Rivals
+  // Protagonists, Rivals & Champions
   { name: "Red", file: "red.png" },
   { name: "Blue", file: "blue.png" },
   { name: "Leaf", file: "leaf.png" },
@@ -62,13 +59,9 @@ const TRAINER_AVATARS = [
   { name: "Silver", file: "silver.png" },
   { name: "Brendan", file: "brendan.png" },
   { name: "May", file: "may.png" },
-  { name: "Wally", file: "wally.png" },
   { name: "Lucas", file: "lucas.png" },
   { name: "Dawn", file: "dawn.png" },
   { name: "Barry", file: "barry.png" },
-  { name: "Hilbert", file: "hilbert.png" },
-  { name: "Hilda", file: "hilda.png" },
-  { name: "N", file: "n.png" },
   { name: "Cynthia", file: "cynthia.png" },
   { name: "Steven", file: "steven.png" },
   { name: "Lance", file: "lance.png" }
@@ -80,7 +73,7 @@ let activeSlotIndex = null;
 let deferredPrompt = null;
 let gridState = JSON.parse(localStorage.getItem("pokemon_grid_data")) || {};
 
-// Elements
+// DOM Elements
 const gridEl = document.getElementById("pokemon-grid");
 const pickerModal = document.getElementById("picker-modal");
 const settingsModal = document.getElementById("settings-modal");
@@ -135,12 +128,15 @@ bindDynamicInput(trainerInput, nameWrapper, "pokemon_grid_trainer");
 bindDynamicInput(firstGameInput, firstGameWrapper, "pokemon_grid_firstgame");
 bindDynamicInput(favLocationInput, locationWrapper, "pokemon_grid_location");
 
-// 2. Avatar Selection
+// 2. Avatar Selection & Cache Sanitization
+const defaultAvatar = TRAINER_BASE + "red.png";
 const savedAvatar = localStorage.getItem("pokemon_grid_avatar");
-if (savedAvatar && savedAvatar.includes("raw.githubusercontent.com")) {
+
+if (savedAvatar && savedAvatar.includes("PokeAPI/sprites/master/sprites/trainers")) {
   trainerAvatarImg.src = savedAvatar;
 } else {
-  trainerAvatarImg.src = TRAINER_BASE + TRAINER_AVATARS[0].file;
+  trainerAvatarImg.src = defaultAvatar;
+  localStorage.setItem("pokemon_grid_avatar", defaultAvatar);
 }
 
 function buildAvatarGrid() {

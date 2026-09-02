@@ -1,4 +1,4 @@
-const CACHE_NAME = "pokegrid-v7";
+const CACHE_NAME = "pokegrid-v8";
 const ASSETS = [
   "./",
   "./index.html",
