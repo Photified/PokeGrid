@@ -17,22 +17,61 @@ const GENERATIONS = [
   { gen: "Gen IX", start: 906, end: 1025 }
 ];
 
-// Classic Trainer Avatar Roster
+// Reliable Smogon GitHub Raw CDN (CORS & hotlink friendly)
+const TRAINER_BASE = "https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/mods/gen5/sprites/trainers/";
+
+// Comprehensive list: Classic Route NPCs + Protagonists + Rivals + Champions
 const TRAINER_AVATARS = [
-  { name: "Red", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/red.png" },
-  { name: "Blue", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/blue.png" },
-  { name: "Leaf", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/leaf.png" },
-  { name: "Ethan", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/ethan.png" },
-  { name: "Lyra", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/lyra.png" },
-  { name: "Silver", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/silver.png" },
-  { name: "Brendan", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/brendan.png" },
-  { name: "May", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/may.png" },
-  { name: "Lucas", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/lucas.png" },
-  { name: "Dawn", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/dawn.png" },
-  { name: "Cynthia", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/cynthia.png" },
-  { name: "Steven", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/steven.png" },
-  { name: "Lance", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/lance.png" },
-  { name: "Rocket Grunt", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/teamrocket.png" }
+  // Route Trainers & Common NPCs
+  { name: "Youngster", file: "youngster.png" },
+  { name: "Lass", file: "lass.png" },
+  { name: "Bug Catcher", file: "bugcatcher.png" },
+  { name: "Hiker", file: "hiker.png" },
+  { name: "Fisherman", file: "fisherman.png" },
+  { name: "Ace Trainer (M)", file: "acetrainer.png" },
+  { name: "Ace Trainer (F)", file: "acetrainerf.png" },
+  { name: "Hex Maniac", file: "hexmaniac.png" },
+  { name: "Black Belt", file: "blackbelt.png" },
+  { name: "Swimmer (M)", file: "swimmer.png" },
+  { name: "Swimmer (F)", file: "swimmerf.png" },
+  { name: "Psychic", file: "psychic.png" },
+  { name: "Scientist", file: "scientist.png" },
+  { name: "Sailor", file: "sailor.png" },
+  { name: "Bird Keeper", file: "birdkeeper.png" },
+  { name: "Camper", file: "camper.png" },
+  { name: "Picnicker", file: "picnicker.png" },
+  { name: "Pokemaniac", file: "pokemaniac.png" },
+  { name: "Super Nerd", file: "supernerd.png" },
+  { name: "Beauty", file: "beauty.png" },
+  { name: "Gentleman", file: "gentleman.png" },
+  { name: "Biker", file: "biker.png" },
+  { name: "Cue Ball", file: "cueball.png" },
+  { name: "Burglar", file: "burglar.png" },
+  { name: "Juggler", file: "juggler.png" },
+  { name: "Guitarist", file: "guitarist.png" },
+  { name: "Battle Girl", file: "battlegirl.png" },
+  { name: "Dragon Tamer", file: "dragontamer.png" },
+  { name: "Rocket Grunt", file: "teamrocket.png" },
+
+  // Protagonists & Rivals
+  { name: "Red", file: "red.png" },
+  { name: "Blue", file: "blue.png" },
+  { name: "Leaf", file: "leaf.png" },
+  { name: "Ethan", file: "ethan.png" },
+  { name: "Lyra", file: "lyra.png" },
+  { name: "Silver", file: "silver.png" },
+  { name: "Brendan", file: "brendan.png" },
+  { name: "May", file: "may.png" },
+  { name: "Wally", file: "wally.png" },
+  { name: "Lucas", file: "lucas.png" },
+  { name: "Dawn", file: "dawn.png" },
+  { name: "Barry", file: "barry.png" },
+  { name: "Hilbert", file: "hilbert.png" },
+  { name: "Hilda", file: "hilda.png" },
+  { name: "N", file: "n.png" },
+  { name: "Cynthia", file: "cynthia.png" },
+  { name: "Steven", file: "steven.png" },
+  { name: "Lance", file: "lance.png" }
 ];
 
 let allPokemon = [];
@@ -41,7 +80,7 @@ let activeSlotIndex = null;
 let deferredPrompt = null;
 let gridState = JSON.parse(localStorage.getItem("pokemon_grid_data")) || {};
 
-// DOM Elements
+// Elements
 const gridEl = document.getElementById("pokemon-grid");
 const pickerModal = document.getElementById("picker-modal");
 const settingsModal = document.getElementById("settings-modal");
@@ -53,7 +92,7 @@ const pokemonListEl = document.getElementById("pokemon-list");
 const genTabsEl = document.getElementById("gen-tabs");
 const modalCategoryTitle = document.getElementById("modal-category-title");
 
-// Trainer Inputs & Wrappers
+// Dossier Inputs
 const trainerInput = document.getElementById("trainer-name-input");
 const nameWrapper = document.getElementById("name-wrapper");
 const firstGameInput = document.getElementById("first-game-input");
@@ -78,7 +117,7 @@ const cancelResetBtn = document.getElementById("cancel-reset-btn");
 const confirmResetBtn = document.getElementById("confirm-reset-btn");
 const pwaInstallBtn = document.getElementById("pwa-install-btn");
 
-// 1. Auto-Expanding Dynamic Pills Setup
+// 1. Dynamic Auto-Expanding Inputs
 function bindDynamicInput(input, wrapper, storageKey) {
   const sync = () => {
     wrapper.dataset.value = input.value || input.placeholder;
@@ -96,22 +135,27 @@ bindDynamicInput(trainerInput, nameWrapper, "pokemon_grid_trainer");
 bindDynamicInput(firstGameInput, firstGameWrapper, "pokemon_grid_firstgame");
 bindDynamicInput(favLocationInput, locationWrapper, "pokemon_grid_location");
 
-// 2. Trainer Avatar Management
-const savedAvatar = localStorage.getItem("pokemon_grid_avatar") || TRAINER_AVATARS[0].url;
-trainerAvatarImg.src = savedAvatar;
+// 2. Avatar Selection
+const savedAvatar = localStorage.getItem("pokemon_grid_avatar");
+if (savedAvatar && savedAvatar.includes("raw.githubusercontent.com")) {
+  trainerAvatarImg.src = savedAvatar;
+} else {
+  trainerAvatarImg.src = TRAINER_BASE + TRAINER_AVATARS[0].file;
+}
 
 function buildAvatarGrid() {
   avatarGrid.innerHTML = "";
   TRAINER_AVATARS.forEach((av) => {
+    const fullUrl = TRAINER_BASE + av.file;
     const card = document.createElement("div");
     card.className = "avatar-card";
     card.innerHTML = `
-      <img src="${av.url}" crossOrigin="anonymous" alt="${av.name}" />
+      <img src="${fullUrl}" crossOrigin="anonymous" alt="${av.name}" loading="lazy" />
       <span>${av.name}</span>
     `;
     card.onclick = () => {
-      trainerAvatarImg.src = av.url;
-      localStorage.setItem("pokemon_grid_avatar", av.url);
+      trainerAvatarImg.src = fullUrl;
+      localStorage.setItem("pokemon_grid_avatar", fullUrl);
       avatarModal.classList.add("hidden");
     };
     avatarGrid.appendChild(card);
@@ -124,7 +168,7 @@ avatarBtn.addEventListener("click", () => {
 });
 avatarCloseBtn.addEventListener("click", () => avatarModal.classList.add("hidden"));
 
-// 3. Render Pokémon Grid Cards
+// 3. Render Pokémon Cards
 function renderGrid() {
   gridEl.innerHTML = "";
   categories.forEach((category, idx) => {
@@ -152,7 +196,7 @@ function renderGrid() {
   });
 }
 
-// 4. Fetch Pokémon List
+// 4. PokéAPI List
 async function fetchPokemonList() {
   try {
     const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025");
@@ -164,7 +208,7 @@ async function fetchPokemonList() {
   }
 }
 
-// 5. Tab Navigation & List Filtering
+// 5. Gen Tabs & Pokémon Filtering
 function buildGenTabs() {
   genTabsEl.innerHTML = "";
   GENERATIONS.forEach((g, idx) => {
@@ -202,7 +246,7 @@ function renderFilteredList() {
   });
 }
 
-// 6. Modal Selection
+// 6. Picker Modal
 function openPicker(slotIdx) {
   activeSlotIndex = slotIdx;
   modalCategoryTitle.innerText = categories[slotIdx];
@@ -230,7 +274,7 @@ modalCloseBtn.addEventListener("click", () => pickerModal.classList.add("hidden"
 openSettingsBtn.addEventListener("click", () => settingsModal.classList.remove("hidden"));
 settingsCloseBtn.addEventListener("click", () => settingsModal.classList.add("hidden"));
 
-// 7. Export Image (Download)
+// 7. Image Export
 downloadBtn.addEventListener("click", () => {
   const target = document.getElementById("grid-wrapper");
   html2canvas(target, { useCORS: true, backgroundColor: "#191e24", scale: 2 }).then((canvas) => {
@@ -242,7 +286,7 @@ downloadBtn.addEventListener("click", () => {
   });
 });
 
-// 8. Copy Image to Clipboard
+// 8. Clipboard Copy
 copyBtn.addEventListener("click", async () => {
   const target = document.getElementById("grid-wrapper");
   const originalText = copyBtn.innerText;
@@ -267,15 +311,9 @@ copyBtn.addEventListener("click", async () => {
   }
 });
 
-// 9. Reset Modal Handlers
-openResetBtn.addEventListener("click", () => {
-  confirmModal.classList.remove("hidden");
-});
-
-cancelResetBtn.addEventListener("click", () => {
-  confirmModal.classList.add("hidden");
-});
-
+// 9. Reset Modal
+openResetBtn.addEventListener("click", () => confirmModal.classList.remove("hidden"));
+cancelResetBtn.addEventListener("click", () => confirmModal.classList.add("hidden"));
 confirmResetBtn.addEventListener("click", () => {
   gridState = {};
   localStorage.removeItem("pokemon_grid_data");
@@ -283,7 +321,7 @@ confirmResetBtn.addEventListener("click", () => {
   confirmModal.classList.add("hidden");
 });
 
-// 10. PWA Install Logic
+// 10. PWA Installation
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
