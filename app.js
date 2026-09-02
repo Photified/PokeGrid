@@ -17,154 +17,267 @@ const GENERATIONS = [
   { gen: "Gen IX", start: 906, end: 1025 }
 ];
 
-// Verified PokéAPI GitHub Raw Repository (CORS-friendly, no rate-limits)
-const TRAINER_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/";
-
-const TRAINER_AVATARS = [
-  // Route NPCs
-  { name: "Youngster", file: "youngster.png" },
-  { name: "Lass", file: "lass.png" },
-  { name: "Bug Catcher", file: "bug-catcher.png" },
-  { name: "Hiker", file: "hiker.png" },
-  { name: "Fisherman", file: "fisherman.png" },
-  { name: "Ace Trainer (M)", file: "ace-trainer-m.png" },
-  { name: "Ace Trainer (F)", file: "ace-trainer-f.png" },
-  { name: "Black Belt", file: "black-belt.png" },
-  { name: "Swimmer (M)", file: "swimmer-m.png" },
-  { name: "Swimmer (F)", file: "swimmer-f.png" },
-  { name: "Psychic (M)", file: "psychic-m.png" },
-  { name: "Scientist", file: "scientist.png" },
-  { name: "Sailor", file: "sailor.png" },
-  { name: "Bird Keeper", file: "bird-keeper.png" },
-  { name: "Camper", file: "camper.png" },
-  { name: "Picnicker", file: "picnicker.png" },
-  { name: "Pokemaniac", file: "pokemaniac.png" },
-  { name: "Super Nerd", file: "super-nerd.png" },
-  { name: "Beauty", file: "beauty.png" },
-  { name: "Gentleman", file: "gentleman.png" },
-  { name: "Biker", file: "biker.png" },
-  { name: "Burglar", file: "burglar.png" },
-  { name: "Juggler", file: "juggler.png" },
-  { name: "Guitarist", file: "guitarist.png" },
-  { name: "Battle Girl", file: "battle-girl.png" },
-  { name: "Dragon Tamer", file: "dragon-tamer.png" },
-  { name: "Rocket Grunt", file: "team-rocket-grunt-m.png" },
-
-  // Protagonists, Rivals & Champions
-  { name: "Red", file: "red.png" },
-  { name: "Blue", file: "blue.png" },
-  { name: "Leaf", file: "leaf.png" },
-  { name: "Ethan", file: "ethan.png" },
-  { name: "Lyra", file: "lyra.png" },
-  { name: "Silver", file: "silver.png" },
-  { name: "Brendan", file: "brendan.png" },
-  { name: "May", file: "may.png" },
-  { name: "Lucas", file: "lucas.png" },
-  { name: "Dawn", file: "dawn.png" },
-  { name: "Barry", file: "barry.png" },
-  { name: "Cynthia", file: "cynthia.png" },
-  { name: "Steven", file: "steven.png" },
-  { name: "Lance", file: "lance.png" }
+// PokéAPI Verified Ball Item Endpoints
+const POKEBALLS = [
+  { name: "Poké Ball", slug: "poke-ball" },
+  { name: "Great Ball", slug: "great-ball" },
+  { name: "Ultra Ball", slug: "ultra-ball" },
+  { name: "Master Ball", slug: "master-ball" },
+  { name: "Safari Ball", slug: "safari-ball" },
+  { name: "Fast Ball", slug: "fast-ball" },
+  { name: "Level Ball", slug: "level-ball" },
+  { name: "Lure Ball", slug: "lure-ball" },
+  { name: "Heavy Ball", slug: "heavy-ball" },
+  { name: "Love Ball", slug: "love-ball" },
+  { name: "Friend Ball", slug: "friend-ball" },
+  { name: "Moon Ball", slug: "moon-ball" },
+  { name: "Sport Ball", slug: "sport-ball" },
+  { name: "Net Ball", slug: "net-ball" },
+  { name: "Dive Ball", slug: "dive-ball" },
+  { name: "Nest Ball", slug: "nest-ball" },
+  { name: "Repeat Ball", slug: "repeat-ball" },
+  { name: "Timer Ball", slug: "timer-ball" },
+  { name: "Luxury Ball", slug: "luxury-ball" },
+  { name: "Premier Ball", slug: "premier-ball" },
+  { name: "Dusk Ball", slug: "dusk-ball" },
+  { name: "Heal Ball", slug: "heal-ball" },
+  { name: "Quick Ball", slug: "quick-ball" },
+  { name: "Cherish Ball", slug: "cherish-ball" },
+  { name: "Park Ball", slug: "park-ball" },
+  { name: "Dream Ball", slug: "dream-ball" },
+  { name: "Beast Ball", slug: "beast-ball" }
 ];
+
+const POKEMON_GAMES = [
+  "Red", "Blue", "Yellow",
+  "Gold", "Silver", "Crystal",
+  "Ruby", "Sapphire", "Emerald", "FireRed", "LeafGreen", "Colosseum", "XD: Gale of Darkness",
+  "Diamond", "Pearl", "Platinum", "HeartGold", "SoulSilver",
+  "Black", "White", "Black 2", "White 2",
+  "X", "Y", "Omega Ruby", "Alpha Sapphire",
+  "Sun", "Moon", "Ultra Sun", "Ultra Moon", "Let's Go Pikachu/Eevee",
+  "Sword", "Shield", "Brilliant Diamond", "Shining Pearl", "Legends: Arceus",
+  "Scarlet", "Violet"
+];
+
+const REGION_LOCATIONS = {
+  "Gen I": [
+    "Pallet Town", "Viridian City", "Pewter City", "Cerulean City", "Vermilion City", "Lavender Town", "Celadon City", "Fuchsia City", "Saffron City", "Cinnabar Island", "Indigo Plateau",
+    "Route 1", "Route 24 (Nugget Bridge)", "Viridian Forest", "Mt. Moon", "Rock Tunnel", "Pokémon Tower", "Safari Zone", "Silph Co.", "Seafoam Islands", "Power Plant", "Victory Road", "Cerulean Cave"
+  ],
+  "Gen II": [
+    "New Bark Town", "Cherrygrove City", "Violet City", "Azalea Town", "Goldenrod City", "Ecruteak City", "Olivine City", "Cianwood City", "Mahogany Town", "Blackthorn City",
+    "Sprout Tower", "Ruins of Alph", "Ilex Forest", "National Park", "Burned Tower", "Bell Tower", "Whirl Islands", "Mt. Mortar", "Lake of Rage", "Dragon's Den", "Mt. Silver"
+  ],
+  "Gen III": [
+    "Littleroot Town", "Oldale Town", "Petalburg City", "Rustboro City", "Dewford Town", "Slateport City", "Mauville City", "Verdanturf Town", "Fallarbor Town", "Lavaridge Town", "Fortree City", "Lilycove City", "Mossdeep City", "Sootopolis City", "Pacifidlog Town", "Ever Grande City",
+    "Route 113 (Ash Route)", "Route 119", "Route 120", "Petalburg Woods", "Granite Cave", "Fiery Path", "Meteor Falls", "Mt. Chimney", "Safari Zone", "Mt. Pyre", "Shoal Cave", "Seafloor Cavern", "Sky Pillar", "Battle Frontier"
+  ],
+  "Gen IV": [
+    "Twinleaf Town", "Sandgem Town", "Jubilife City", "Oreburgh City", "Floaroma Town", "Eterna City", "Hearthome City", "Solaceon Town", "Veilstone City", "Pastoria City", "Celestic Town", "Canalave City", "Snowpoint City", "Sunyshore City",
+    "Route 209", "Route 216 (Blizzard)", "Eterna Forest", "Mt. Coronet", "Great Marsh", "Lake Verity", "Lake Valor", "Lake Acuity", "Spear Pillar", "Distortion World", "Sendoff Spring", "Iron Island"
+  ],
+  "Gen V": [
+    "Nuvema Town", "Accumula Town", "Striaton City", "Nacrene City", "Castelia City", "Nimbasa City", "Driftveil City", "Mistralton City", "Icirrus City", "Opelucid City", "Aspertia City", "Virbank City", "Undella Town", "Lacunosa Town",
+    "Skyarrow Bridge", "Pinwheel Forest", "Desert Resort", "Relic Castle", "Chargestone Cave", "Dragonspiral Tower", "Village Bridge", "Giant Chasm", "PWT (World Tournament)", "N's Castle"
+  ],
+  "Gen VI": [
+    "Vaniville Town", "Aquacorde Town", "Santalune City", "Lumiose City", "Camphrier Town", "Ambrette Town", "Cyllage City", "Geosenge Town", "Shalour City", "Coumarine City", "Laverre City", "Dendemille Town", "Anistar City", "Couriway Town", "Snowbelle City",
+    "Santalune Forest", "Glittering Cave", "Tower of Mastery", "Kalos Power Plant", "Poké Ball Factory", "Frost Cavern", "Terminus Cave", "Pokémon Village"
+  ],
+  "Gen VII": [
+    "Hau'oli City", "Iki Town", "Heahea City", "Paniola Town", "Konikoni City", "Malie City", "Tapu Village", "Po Town", "Seafolk Village",
+    "Route 1", "Melemele Meadow", "Brooklet Hill", "Wela Volcano Park", "Lush Jungle", "Mount Hokulani", "Aether Paradise", "Exeggutor Island", "Vast Poni Canyon", "Mount Lanakila", "Ultra Space"
+  ],
+  "Gen VIII": [
+    "Postwick", "Wedgehurst", "Motostoke", "Turffield", "Hulbury", "Hammerlocke", "Stow-on-Side", "Ballonlea", "Circhester", "Spikemuth", "Wyndon", "Master Dojo", "Freezington",
+    "Wild Area (Lake of Outrage)", "Galar Mine", "Glimwood Tangle", "Slumbering Weald", "Isle of Armor", "Crown Tundra", "Dyna Tree Hill"
+  ],
+  "Gen IX": [
+    "Cabo Poco", "Mesagoza", "Cortondo", "Artazon", "Levincia", "Zapapico", "Cascarrafa", "Porto Marinada", "Medali", "Montenevera", "Alfornada", "Glaseado Mountain", "Mossui Town", "Blueberry Academy",
+    "Poco Path", "Area Zero (Great Crater)", "Asado Desert", "Tagtree Thicket", "Casseroya Lake", "Kitakami Wilds", "Terarium"
+  ]
+};
 
 let allPokemon = [];
 let activeGenIndex = 0;
+let activeLocGenKey = "Gen I";
 let activeSlotIndex = null;
 let deferredPrompt = null;
+
 let gridState = JSON.parse(localStorage.getItem("pokemon_grid_data")) || {};
 
 // DOM Elements
 const gridEl = document.getElementById("pokemon-grid");
 const pickerModal = document.getElementById("picker-modal");
+const gameModal = document.getElementById("game-modal");
+const locationModal = document.getElementById("location-modal");
+const ballModal = document.getElementById("ball-modal");
 const settingsModal = document.getElementById("settings-modal");
 const confirmModal = document.getElementById("confirm-modal");
-const avatarModal = document.getElementById("avatar-modal");
+
 const searchInput = document.getElementById("search-input");
 const shinyToggle = document.getElementById("shiny-toggle");
 const pokemonListEl = document.getElementById("pokemon-list");
 const genTabsEl = document.getElementById("gen-tabs");
 const modalCategoryTitle = document.getElementById("modal-category-title");
 
-// Dossier Inputs
+// Trainer Inputs & Displays
 const trainerInput = document.getElementById("trainer-name-input");
 const nameWrapper = document.getElementById("name-wrapper");
-const firstGameInput = document.getElementById("first-game-input");
-const firstGameWrapper = document.getElementById("first-game-wrapper");
-const favLocationInput = document.getElementById("fav-location-input");
-const locationWrapper = document.getElementById("location-wrapper");
+const firstGamePill = document.getElementById("first-game-pill");
+const firstGameDisplay = document.getElementById("first-game-display");
+const locationPill = document.getElementById("location-pill");
+const locationDisplay = document.getElementById("location-display");
+const gameListEl = document.getElementById("game-list");
+const locGenTabsEl = document.getElementById("loc-gen-tabs");
+const locSearchInput = document.getElementById("loc-search-input");
+const locationListEl = document.getElementById("location-list");
 
-// Avatar Elements
-const avatarBtn = document.getElementById("avatar-btn");
-const trainerAvatarImg = document.getElementById("trainer-avatar-img");
-const avatarGrid = document.getElementById("avatar-grid");
-const avatarCloseBtn = document.getElementById("avatar-close-btn");
+// Ball Elements
+const ballBtn = document.getElementById("ball-btn");
+const trainerBallImg = document.getElementById("trainer-ball-img");
+const ballGrid = document.getElementById("ball-grid");
 
 // Toolbar Buttons
-const openSettingsBtn = document.getElementById("open-settings-btn");
-const settingsCloseBtn = document.getElementById("settings-close-btn");
-const modalCloseBtn = document.getElementById("modal-close-btn");
 const downloadBtn = document.getElementById("download-btn");
 const copyBtn = document.getElementById("copy-btn");
 const openResetBtn = document.getElementById("open-reset-btn");
 const cancelResetBtn = document.getElementById("cancel-reset-btn");
 const confirmResetBtn = document.getElementById("confirm-reset-btn");
+const openSettingsBtn = document.getElementById("open-settings-btn");
+const settingsCloseBtn = document.getElementById("settings-close-btn");
+const modalCloseBtn = document.getElementById("modal-close-btn");
+const gameCloseBtn = document.getElementById("game-close-btn");
+const locationCloseBtn = document.getElementById("location-close-btn");
+const ballCloseBtn = document.getElementById("ball-close-btn");
 const pwaInstallBtn = document.getElementById("pwa-install-btn");
 
-// 1. Dynamic Auto-Expanding Inputs
-function bindDynamicInput(input, wrapper, storageKey) {
-  const sync = () => {
-    wrapper.dataset.value = input.value || input.placeholder;
-  };
-  const saved = localStorage.getItem(storageKey) || "";
-  input.value = saved;
-  sync();
-  input.addEventListener("input", (e) => {
-    sync();
-    localStorage.setItem(storageKey, e.target.value);
+// 1. Trainer Name Setup
+const savedName = localStorage.getItem("pokemon_grid_trainer") || "";
+trainerInput.value = savedName;
+nameWrapper.dataset.value = savedName || trainerInput.placeholder;
+trainerInput.addEventListener("input", (e) => {
+  nameWrapper.dataset.value = e.target.value || trainerInput.placeholder;
+  localStorage.setItem("pokemon_grid_trainer", e.target.value);
+});
+
+// 2. First Game Modal & Selection
+const savedGame = localStorage.getItem("pokemon_grid_firstgame");
+if (savedGame) {
+  firstGameDisplay.innerText = savedGame;
+  firstGameDisplay.classList.remove("placeholder");
+}
+
+function buildGameList() {
+  gameListEl.innerHTML = "";
+  POKEMON_GAMES.forEach((game) => {
+    const item = document.createElement("div");
+    item.className = "list-item";
+    item.innerText = game;
+    item.onclick = () => {
+      firstGameDisplay.innerText = game;
+      firstGameDisplay.classList.remove("placeholder");
+      localStorage.setItem("pokemon_grid_firstgame", game);
+      gameModal.classList.add("hidden");
+    };
+    gameListEl.appendChild(item);
   });
 }
 
-bindDynamicInput(trainerInput, nameWrapper, "pokemon_grid_trainer");
-bindDynamicInput(firstGameInput, firstGameWrapper, "pokemon_grid_firstgame");
-bindDynamicInput(favLocationInput, locationWrapper, "pokemon_grid_location");
+firstGamePill.onclick = () => {
+  buildGameList();
+  gameModal.classList.remove("hidden");
+};
+gameCloseBtn.onclick = () => gameModal.classList.add("hidden");
 
-// 2. Avatar Selection & Cache Sanitization
-const defaultAvatar = TRAINER_BASE + "red.png";
-const savedAvatar = localStorage.getItem("pokemon_grid_avatar");
-
-if (savedAvatar && savedAvatar.includes("PokeAPI/sprites/master/sprites/trainers")) {
-  trainerAvatarImg.src = savedAvatar;
-} else {
-  trainerAvatarImg.src = defaultAvatar;
-  localStorage.setItem("pokemon_grid_avatar", defaultAvatar);
+// 3. Location Modal & Selection
+const savedLocation = localStorage.getItem("pokemon_grid_location");
+if (savedLocation) {
+  locationDisplay.innerText = savedLocation;
+  locationDisplay.classList.remove("placeholder");
 }
 
-function buildAvatarGrid() {
-  avatarGrid.innerHTML = "";
-  TRAINER_AVATARS.forEach((av) => {
-    const fullUrl = TRAINER_BASE + av.file;
+function buildLocationTabs() {
+  locGenTabsEl.innerHTML = "";
+  Object.keys(REGION_LOCATIONS).forEach((genKey) => {
+    const btn = document.createElement("button");
+    btn.className = `gen-tab-btn ${genKey === activeLocGenKey ? "active" : ""}`;
+    btn.innerText = genKey;
+    btn.onclick = () => {
+      activeLocGenKey = genKey;
+      document.querySelectorAll("#loc-gen-tabs .gen-tab-btn").forEach((b) => {
+        b.classList.toggle("active", b.innerText === genKey);
+      });
+      renderLocationList();
+    };
+    locGenTabsEl.appendChild(btn);
+  });
+}
+
+function renderLocationList() {
+  const query = locSearchInput.value.toLowerCase().trim();
+  let list = REGION_LOCATIONS[activeLocGenKey] || [];
+
+  if (query) {
+    list = list.filter((loc) => loc.toLowerCase().includes(query));
+  }
+
+  locationListEl.innerHTML = "";
+  list.forEach((loc) => {
+    const item = document.createElement("div");
+    item.className = "list-item";
+    item.innerText = loc;
+    item.onclick = () => {
+      locationDisplay.innerText = loc;
+      locationDisplay.classList.remove("placeholder");
+      localStorage.setItem("pokemon_grid_location", loc);
+      locationModal.classList.add("hidden");
+    };
+    locationListEl.appendChild(item);
+  });
+}
+
+locationPill.onclick = () => {
+  locSearchInput.value = "";
+  buildLocationTabs();
+  renderLocationList();
+  locationModal.classList.remove("hidden");
+};
+locSearchInput.addEventListener("input", renderLocationList);
+locationCloseBtn.onclick = () => locationModal.classList.add("hidden");
+
+// 4. Poké Ball Selector
+const BALL_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/";
+const savedBall = localStorage.getItem("pokemon_grid_ball") || (BALL_BASE + "poke-ball.png");
+trainerBallImg.src = savedBall;
+
+function buildBallGrid() {
+  ballGrid.innerHTML = "";
+  POKEBALLS.forEach((b) => {
+    const url = `${BALL_BASE}${b.slug}.png`;
     const card = document.createElement("div");
-    card.className = "avatar-card";
+    card.className = "ball-card";
     card.innerHTML = `
-      <img src="${fullUrl}" crossOrigin="anonymous" alt="${av.name}" loading="lazy" />
-      <span>${av.name}</span>
+      <img src="${url}" crossOrigin="anonymous" alt="${b.name}" />
+      <span>${b.name}</span>
     `;
     card.onclick = () => {
-      trainerAvatarImg.src = fullUrl;
-      localStorage.setItem("pokemon_grid_avatar", fullUrl);
-      avatarModal.classList.add("hidden");
+      trainerBallImg.src = url;
+      localStorage.setItem("pokemon_grid_ball", url);
+      ballModal.classList.add("hidden");
     };
-    avatarGrid.appendChild(card);
+    ballGrid.appendChild(card);
   });
 }
 
-avatarBtn.addEventListener("click", () => {
-  buildAvatarGrid();
-  avatarModal.classList.remove("hidden");
-});
-avatarCloseBtn.addEventListener("click", () => avatarModal.classList.add("hidden"));
+ballBtn.onclick = () => {
+  buildBallGrid();
+  ballModal.classList.remove("hidden");
+};
+ballCloseBtn.onclick = () => ballModal.classList.add("hidden");
 
-// 3. Render Pokémon Cards
+// 5. Render Pokémon Grid Cards
 function renderGrid() {
   gridEl.innerHTML = "";
   categories.forEach((category, idx) => {
@@ -192,7 +305,7 @@ function renderGrid() {
   });
 }
 
-// 4. PokéAPI List
+// 6. Fetch Pokémon List
 async function fetchPokemonList() {
   try {
     const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025");
@@ -204,7 +317,7 @@ async function fetchPokemonList() {
   }
 }
 
-// 5. Gen Tabs & Pokémon Filtering
+// 7. Gen Tabs & Pokémon Filtering
 function buildGenTabs() {
   genTabsEl.innerHTML = "";
   GENERATIONS.forEach((g, idx) => {
@@ -213,7 +326,7 @@ function buildGenTabs() {
     btn.innerText = g.gen;
     btn.onclick = () => {
       activeGenIndex = idx;
-      document.querySelectorAll(".gen-tab-btn").forEach((b, i) => {
+      document.querySelectorAll("#gen-tabs .gen-tab-btn").forEach((b, i) => {
         b.classList.toggle("active", i === idx);
       });
       renderFilteredList();
@@ -226,23 +339,23 @@ function renderFilteredList() {
   const query = searchInput.value.toLowerCase().trim();
   const currentGen = GENERATIONS[activeGenIndex];
 
-  let list = allPokemon.filter(p => p.id >= currentGen.start && p.id <= currentGen.end);
+  let list = allPokemon.filter((p) => p.id >= currentGen.start && p.id <= currentGen.end);
 
   if (query) {
-    list = allPokemon.filter(p => p.name.toLowerCase().includes(query) || String(p.id).includes(query));
+    list = allPokemon.filter((p) => p.name.toLowerCase().includes(query) || String(p.id).includes(query));
   }
 
   pokemonListEl.innerHTML = "";
   list.forEach((p) => {
     const item = document.createElement("div");
-    item.className = "pokemon-option";
-    item.innerHTML = `<span class="dex-id">#${p.id}</span> <span>${p.name}</span>`;
+    item.className = "list-item";
+    item.innerHTML = `<span class="item-tag">#${p.id}</span> <span>${p.name}</span>`;
     item.onclick = () => selectPokemon(p.id);
     pokemonListEl.appendChild(item);
   });
 }
 
-// 6. Picker Modal
+// 8. Pokémon Selection Modal
 function openPicker(slotIdx) {
   activeSlotIndex = slotIdx;
   modalCategoryTitle.innerText = categories[slotIdx];
@@ -266,12 +379,12 @@ function selectPokemon(id) {
 }
 
 searchInput.addEventListener("input", renderFilteredList);
-modalCloseBtn.addEventListener("click", () => pickerModal.classList.add("hidden"));
-openSettingsBtn.addEventListener("click", () => settingsModal.classList.remove("hidden"));
-settingsCloseBtn.addEventListener("click", () => settingsModal.classList.add("hidden"));
+modalCloseBtn.onclick = () => pickerModal.classList.add("hidden");
+openSettingsBtn.onclick = () => settingsModal.classList.remove("hidden");
+settingsCloseBtn.onclick = () => settingsModal.classList.add("hidden");
 
-// 7. Image Export
-downloadBtn.addEventListener("click", () => {
+// 9. Export Image (Download)
+downloadBtn.onclick = () => {
   const target = document.getElementById("grid-wrapper");
   html2canvas(target, { useCORS: true, backgroundColor: "#191e24", scale: 2 }).then((canvas) => {
     const link = document.createElement("a");
@@ -280,10 +393,10 @@ downloadBtn.addEventListener("click", () => {
     link.href = canvas.toDataURL("image/png");
     link.click();
   });
-});
+};
 
-// 8. Clipboard Copy
-copyBtn.addEventListener("click", async () => {
+// 10. Copy Image to Clipboard
+copyBtn.onclick = async () => {
   const target = document.getElementById("grid-wrapper");
   const originalText = copyBtn.innerText;
 
@@ -291,9 +404,7 @@ copyBtn.addEventListener("click", async () => {
     const canvas = await html2canvas(target, { useCORS: true, backgroundColor: "#191e24", scale: 2 });
     canvas.toBlob(async (blob) => {
       if (!blob) throw new Error("Blob conversion failed");
-      await navigator.clipboard.write([
-        new ClipboardItem({ "image/png": blob })
-      ]);
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
       copyBtn.innerText = "Copied!";
       copyBtn.style.background = "#2e7d32";
       setTimeout(() => {
@@ -305,26 +416,26 @@ copyBtn.addEventListener("click", async () => {
     console.error("Copy failed:", err);
     alert("Could not copy directly to clipboard. Please use 'Export Image' instead.");
   }
-});
+};
 
-// 9. Reset Modal
-openResetBtn.addEventListener("click", () => confirmModal.classList.remove("hidden"));
-cancelResetBtn.addEventListener("click", () => confirmModal.classList.add("hidden"));
-confirmResetBtn.addEventListener("click", () => {
+// 11. Reset Grid
+openResetBtn.onclick = () => confirmModal.classList.remove("hidden");
+cancelResetBtn.onclick = () => confirmModal.classList.add("hidden");
+confirmResetBtn.onclick = () => {
   gridState = {};
   localStorage.removeItem("pokemon_grid_data");
   renderGrid();
   confirmModal.classList.add("hidden");
-});
+};
 
-// 10. PWA Installation
+// 12. PWA Install Logic
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
   pwaInstallBtn.innerText = "Install App";
 });
 
-pwaInstallBtn.addEventListener("click", async () => {
+pwaInstallBtn.onclick = async () => {
   if (deferredPrompt) {
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
@@ -336,12 +447,12 @@ pwaInstallBtn.addEventListener("click", async () => {
   } else {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (isIOS) {
-      alert("To install on iOS: tap the Share button in Safari, then select 'Add to Home Screen'.");
+      alert("To install on iOS: tap Share in Safari, then 'Add to Home Screen'.");
     } else {
-      alert("To install: use your browser's menu (top-right or address bar icon) and select 'Install PokéGrid' or 'Add to Home screen'.");
+      alert("To install: use your browser's menu and select 'Install PokéGrid' or 'Add to Home screen'.");
     }
   }
-});
+};
 
 window.addEventListener("appinstalled", () => {
   pwaInstallBtn.innerText = "App Installed!";
@@ -354,7 +465,7 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// Initialization
+// Initial Run
 buildGenTabs();
 fetchPokemonList();
 renderGrid();
