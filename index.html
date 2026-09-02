@@ -117,6 +117,7 @@
       align-items: center;
       gap: 12px;
       margin-bottom: 22px;
+      text-align: center;
     }
     .pokegrid-title {
       font-size: 38px;
@@ -124,20 +125,19 @@
       letter-spacing: 1px;
       color: var(--poke-yellow);
       text-shadow: 3px 3px 0 var(--poke-blue), -2px -2px 0 var(--poke-blue), 2px -2px 0 var(--poke-blue), -2px 2px 0 var(--poke-blue);
-      text-transform: none; /* Preserves exact PokéGrid casing */
+      text-transform: none;
     }
     
-    /* Centered Trainer Pill */
+    /* Auto-Sizing Centered Pill */
     .trainer-box {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
       gap: 8px;
       background: #12151b;
       border: 2px solid #2d3542;
-      padding: 6px 18px;
+      padding: 6px 16px;
       border-radius: 30px;
-      min-width: 260px;
+      margin: 0 auto;
     }
     .trainer-label {
       font-size: 11px;
@@ -146,18 +146,39 @@
       letter-spacing: 1px;
       flex-shrink: 0;
     }
+    .trainer-input-wrapper {
+      display: inline-grid;
+      vertical-align: top;
+      align-items: center;
+    }
+    .trainer-input-wrapper::after,
+    .trainer-input {
+      width: auto;
+      min-width: 8ch;
+      grid-area: 1 / 2;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 0;
+      margin: 0;
+      border: none;
+      outline: none;
+      white-space: pre;
+    }
+    .trainer-input-wrapper::after {
+      content: attr(data-value) " ";
+      visibility: hidden;
+    }
     .trainer-input {
       background: transparent;
-      border: none;
       color: #fff;
-      font-weight: 700;
-      font-size: 14px;
-      outline: none;
-      text-align: center; /* Centers the typed name */
-      width: 100%;
-      max-width: 160px;
+      text-align: left;
     }
-    .trainer-input::placeholder { color: #586578; font-weight: normal; text-align: center; }
+    .trainer-input::placeholder {
+      color: #586578;
+      font-weight: normal;
+      text-align: left;
+    }
 
     .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
 
@@ -413,18 +434,29 @@
       <button class="action-btn" id="open-reset-btn">Reset Grid</button>
     </div>
 
+    <!-- Exportable Grid Wrapper -->
     <div id="grid-wrapper">
       <div class="grid-header">
         <div class="pokegrid-title">PokéGrid</div>
         <div class="trainer-box">
           <span class="trainer-label">TRAINER:</span>
-          <input type="text" id="trainer-name-input" class="trainer-input" placeholder="Your Name Here" maxlength="24" />
+          <div class="trainer-input-wrapper" id="trainer-wrapper" data-value="Your Name Here">
+            <input 
+              type="text" 
+              id="trainer-name-input" 
+              class="trainer-input" 
+              placeholder="Your Name Here" 
+              maxlength="24" 
+              autocomplete="off"
+            />
+          </div>
         </div>
       </div>
       <div class="grid" id="pokemon-grid"></div>
     </div>
   </main>
 
+  <!-- Pokémon Picker Modal -->
   <div id="picker-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
@@ -445,6 +477,7 @@
     </div>
   </div>
 
+  <!-- Settings & How-To Modal -->
   <div id="settings-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
@@ -475,6 +508,7 @@
     </div>
   </div>
 
+  <!-- Styled Reset Confirmation Modal -->
   <div id="confirm-modal" class="modal hidden">
     <div class="modal-content confirm-modal-content">
       <div class="modal-header" style="justify-content: center; border-bottom: none;">

@@ -33,7 +33,9 @@ const shinyToggle = document.getElementById("shiny-toggle");
 const pokemonListEl = document.getElementById("pokemon-list");
 const genTabsEl = document.getElementById("gen-tabs");
 const modalCategoryTitle = document.getElementById("modal-category-title");
+
 const trainerInput = document.getElementById("trainer-name-input");
+const trainerWrapper = document.getElementById("trainer-wrapper");
 
 const openSettingsBtn = document.getElementById("open-settings-btn");
 const settingsCloseBtn = document.getElementById("settings-close-btn");
@@ -46,13 +48,22 @@ const cancelResetBtn = document.getElementById("cancel-reset-btn");
 const confirmResetBtn = document.getElementById("confirm-reset-btn");
 const pwaInstallBtn = document.getElementById("pwa-install-btn");
 
-// Trainer Name Persistence
-trainerInput.value = localStorage.getItem("pokemon_grid_trainer") || "";
+// 1. Dynamic Auto-Sizing Trainer Pill Setup
+function syncTrainerWidth(value) {
+  trainerWrapper.dataset.value = value || trainerInput.placeholder;
+}
+
+const savedTrainer = localStorage.getItem("pokemon_grid_trainer") || "";
+trainerInput.value = savedTrainer;
+syncTrainerWidth(savedTrainer);
+
 trainerInput.addEventListener("input", (e) => {
-  localStorage.setItem("pokemon_grid_trainer", e.target.value);
+  const val = e.target.value;
+  syncTrainerWidth(val);
+  localStorage.setItem("pokemon_grid_trainer", val);
 });
 
-// 1. Render Grid
+// 2. Render Grid Cards
 function renderGrid() {
   gridEl.innerHTML = "";
   categories.forEach((category, idx) => {
@@ -80,7 +91,7 @@ function renderGrid() {
   });
 }
 
-// 2. Fetch Pokémon List
+// 3. Fetch Pokémon List
 async function fetchPokemonList() {
   try {
     const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025");
@@ -92,7 +103,7 @@ async function fetchPokemonList() {
   }
 }
 
-// 3. Tab Navigation & List
+// 4. Tab Navigation & List Filtering
 function buildGenTabs() {
   genTabsEl.innerHTML = "";
   GENERATIONS.forEach((g, idx) => {
@@ -130,7 +141,7 @@ function renderFilteredList() {
   });
 }
 
-// 4. Modal Interactions
+// 5. Modal Selection
 function openPicker(slotIdx) {
   activeSlotIndex = slotIdx;
   modalCategoryTitle.innerText = categories[slotIdx];
@@ -158,7 +169,7 @@ modalCloseBtn.addEventListener("click", () => pickerModal.classList.add("hidden"
 openSettingsBtn.addEventListener("click", () => settingsModal.classList.remove("hidden"));
 settingsCloseBtn.addEventListener("click", () => settingsModal.classList.add("hidden"));
 
-// 5. Export Image (Download)
+// 6. Export Image (Download)
 downloadBtn.addEventListener("click", () => {
   const target = document.getElementById("grid-wrapper");
   html2canvas(target, { useCORS: true, backgroundColor: "#191e24", scale: 2 }).then((canvas) => {
@@ -170,7 +181,7 @@ downloadBtn.addEventListener("click", () => {
   });
 });
 
-// 6. Copy Image to Clipboard
+// 7. Copy Image to Clipboard
 copyBtn.addEventListener("click", async () => {
   const target = document.getElementById("grid-wrapper");
   const originalText = copyBtn.innerText;
@@ -195,7 +206,7 @@ copyBtn.addEventListener("click", async () => {
   }
 });
 
-// 7. Custom Styled Reset Dialog
+// 8. Reset Modal Handlers
 openResetBtn.addEventListener("click", () => {
   confirmModal.classList.remove("hidden");
 });
@@ -211,11 +222,11 @@ confirmResetBtn.addEventListener("click", () => {
   confirmModal.classList.add("hidden");
 });
 
-// 8. PWA Install Logic (Always visible button with fallback guidance)
+// 9. PWA Install Logic
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  pwaInstallBtn.innerText = "Install PokeGrid App";
+  pwaInstallBtn.innerText = "Install App";
 });
 
 pwaInstallBtn.addEventListener("click", async () => {
@@ -228,12 +239,11 @@ pwaInstallBtn.addEventListener("click", async () => {
     }
     deferredPrompt = null;
   } else {
-    // If the browser already installed it, or doesn't support the automated prompt
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (isIOS) {
       alert("To install on iOS: tap the Share button in Safari, then select 'Add to Home Screen'.");
     } else {
-      alert("To install: use your browser's menu (top-right or address bar icon) and select 'Install PokeGrid' or 'Add to Home screen'.");
+      alert("To install: use your browser's menu (top-right or address bar icon) and select 'Install PokéGrid' or 'Add to Home screen'.");
     }
   }
 });
@@ -249,7 +259,7 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// Init
+// Initialization
 buildGenTabs();
 fetchPokemonList();
 renderGrid();
