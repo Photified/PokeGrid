@@ -17,6 +17,24 @@ const GENERATIONS = [
   { gen: "Gen IX", start: 906, end: 1025 }
 ];
 
+// Classic Trainer Avatar Roster
+const TRAINER_AVATARS = [
+  { name: "Red", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/red.png" },
+  { name: "Blue", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/blue.png" },
+  { name: "Leaf", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/leaf.png" },
+  { name: "Ethan", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/ethan.png" },
+  { name: "Lyra", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/lyra.png" },
+  { name: "Silver", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/silver.png" },
+  { name: "Brendan", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/brendan.png" },
+  { name: "May", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/may.png" },
+  { name: "Lucas", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/lucas.png" },
+  { name: "Dawn", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/dawn.png" },
+  { name: "Cynthia", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/cynthia.png" },
+  { name: "Steven", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/steven.png" },
+  { name: "Lance", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/lance.png" },
+  { name: "Rocket Grunt", url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/teamrocket.png" }
+];
+
 let allPokemon = [];
 let activeGenIndex = 0;
 let activeSlotIndex = null;
@@ -28,42 +46,85 @@ const gridEl = document.getElementById("pokemon-grid");
 const pickerModal = document.getElementById("picker-modal");
 const settingsModal = document.getElementById("settings-modal");
 const confirmModal = document.getElementById("confirm-modal");
+const avatarModal = document.getElementById("avatar-modal");
 const searchInput = document.getElementById("search-input");
 const shinyToggle = document.getElementById("shiny-toggle");
 const pokemonListEl = document.getElementById("pokemon-list");
 const genTabsEl = document.getElementById("gen-tabs");
 const modalCategoryTitle = document.getElementById("modal-category-title");
 
+// Trainer Inputs & Wrappers
 const trainerInput = document.getElementById("trainer-name-input");
-const trainerWrapper = document.getElementById("trainer-wrapper");
+const nameWrapper = document.getElementById("name-wrapper");
+const firstGameInput = document.getElementById("first-game-input");
+const firstGameWrapper = document.getElementById("first-game-wrapper");
+const favLocationInput = document.getElementById("fav-location-input");
+const locationWrapper = document.getElementById("location-wrapper");
 
+// Avatar Elements
+const avatarBtn = document.getElementById("avatar-btn");
+const trainerAvatarImg = document.getElementById("trainer-avatar-img");
+const avatarGrid = document.getElementById("avatar-grid");
+const avatarCloseBtn = document.getElementById("avatar-close-btn");
+
+// Toolbar Buttons
 const openSettingsBtn = document.getElementById("open-settings-btn");
 const settingsCloseBtn = document.getElementById("settings-close-btn");
 const modalCloseBtn = document.getElementById("modal-close-btn");
 const downloadBtn = document.getElementById("download-btn");
 const copyBtn = document.getElementById("copy-btn");
-
 const openResetBtn = document.getElementById("open-reset-btn");
 const cancelResetBtn = document.getElementById("cancel-reset-btn");
 const confirmResetBtn = document.getElementById("confirm-reset-btn");
 const pwaInstallBtn = document.getElementById("pwa-install-btn");
 
-// 1. Dynamic Auto-Sizing Trainer Pill Setup
-function syncTrainerWidth(value) {
-  trainerWrapper.dataset.value = value || trainerInput.placeholder;
+// 1. Auto-Expanding Dynamic Pills Setup
+function bindDynamicInput(input, wrapper, storageKey) {
+  const sync = () => {
+    wrapper.dataset.value = input.value || input.placeholder;
+  };
+  const saved = localStorage.getItem(storageKey) || "";
+  input.value = saved;
+  sync();
+  input.addEventListener("input", (e) => {
+    sync();
+    localStorage.setItem(storageKey, e.target.value);
+  });
 }
 
-const savedTrainer = localStorage.getItem("pokemon_grid_trainer") || "";
-trainerInput.value = savedTrainer;
-syncTrainerWidth(savedTrainer);
+bindDynamicInput(trainerInput, nameWrapper, "pokemon_grid_trainer");
+bindDynamicInput(firstGameInput, firstGameWrapper, "pokemon_grid_firstgame");
+bindDynamicInput(favLocationInput, locationWrapper, "pokemon_grid_location");
 
-trainerInput.addEventListener("input", (e) => {
-  const val = e.target.value;
-  syncTrainerWidth(val);
-  localStorage.setItem("pokemon_grid_trainer", val);
+// 2. Trainer Avatar Management
+const savedAvatar = localStorage.getItem("pokemon_grid_avatar") || TRAINER_AVATARS[0].url;
+trainerAvatarImg.src = savedAvatar;
+
+function buildAvatarGrid() {
+  avatarGrid.innerHTML = "";
+  TRAINER_AVATARS.forEach((av) => {
+    const card = document.createElement("div");
+    card.className = "avatar-card";
+    card.innerHTML = `
+      <img src="${av.url}" crossOrigin="anonymous" alt="${av.name}" />
+      <span>${av.name}</span>
+    `;
+    card.onclick = () => {
+      trainerAvatarImg.src = av.url;
+      localStorage.setItem("pokemon_grid_avatar", av.url);
+      avatarModal.classList.add("hidden");
+    };
+    avatarGrid.appendChild(card);
+  });
+}
+
+avatarBtn.addEventListener("click", () => {
+  buildAvatarGrid();
+  avatarModal.classList.remove("hidden");
 });
+avatarCloseBtn.addEventListener("click", () => avatarModal.classList.add("hidden"));
 
-// 2. Render Grid Cards
+// 3. Render Pokémon Grid Cards
 function renderGrid() {
   gridEl.innerHTML = "";
   categories.forEach((category, idx) => {
@@ -91,7 +152,7 @@ function renderGrid() {
   });
 }
 
-// 3. Fetch Pokémon List
+// 4. Fetch Pokémon List
 async function fetchPokemonList() {
   try {
     const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025");
@@ -103,7 +164,7 @@ async function fetchPokemonList() {
   }
 }
 
-// 4. Tab Navigation & List Filtering
+// 5. Tab Navigation & List Filtering
 function buildGenTabs() {
   genTabsEl.innerHTML = "";
   GENERATIONS.forEach((g, idx) => {
@@ -141,7 +202,7 @@ function renderFilteredList() {
   });
 }
 
-// 5. Modal Selection
+// 6. Modal Selection
 function openPicker(slotIdx) {
   activeSlotIndex = slotIdx;
   modalCategoryTitle.innerText = categories[slotIdx];
@@ -169,7 +230,7 @@ modalCloseBtn.addEventListener("click", () => pickerModal.classList.add("hidden"
 openSettingsBtn.addEventListener("click", () => settingsModal.classList.remove("hidden"));
 settingsCloseBtn.addEventListener("click", () => settingsModal.classList.add("hidden"));
 
-// 6. Export Image (Download)
+// 7. Export Image (Download)
 downloadBtn.addEventListener("click", () => {
   const target = document.getElementById("grid-wrapper");
   html2canvas(target, { useCORS: true, backgroundColor: "#191e24", scale: 2 }).then((canvas) => {
@@ -181,7 +242,7 @@ downloadBtn.addEventListener("click", () => {
   });
 });
 
-// 7. Copy Image to Clipboard
+// 8. Copy Image to Clipboard
 copyBtn.addEventListener("click", async () => {
   const target = document.getElementById("grid-wrapper");
   const originalText = copyBtn.innerText;
@@ -206,7 +267,7 @@ copyBtn.addEventListener("click", async () => {
   }
 });
 
-// 8. Reset Modal Handlers
+// 9. Reset Modal Handlers
 openResetBtn.addEventListener("click", () => {
   confirmModal.classList.remove("hidden");
 });
@@ -222,7 +283,7 @@ confirmResetBtn.addEventListener("click", () => {
   confirmModal.classList.add("hidden");
 });
 
-// 9. PWA Install Logic
+// 10. PWA Install Logic
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
