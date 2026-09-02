@@ -226,6 +226,7 @@
       transition: border-color 0.15s ease;
       width: 100%;
       box-sizing: border-box;
+      position: relative;
     }
     .info-pill:hover { border-color: var(--poke-yellow); }
     
@@ -247,30 +248,22 @@
     }
     .pill-value.placeholder { color: #586578; font-weight: normal; }
 
-    /* Name Input Fill */
-    .dynamic-input-wrapper {
+    /* Canvas-Safe Trainer Input Wrapper */
+    .trainer-input-container {
+      position: relative;
       flex: 1;
       display: flex;
       align-items: center;
       min-width: 0;
     }
-    .dynamic-input-wrapper input {
+    .trainer-input-overlay {
+      position: absolute;
+      inset: 0;
       width: 100%;
-      background: transparent;
-      color: #fff;
-      border: none;
-      outline: none;
-      font-family: inherit;
+      height: 100%;
+      opacity: 0;
+      cursor: text;
       font-size: 12px;
-      font-weight: 700;
-      padding: 0;
-      margin: 0;
-      text-align: left;
-    }
-    .dynamic-input-wrapper input::placeholder {
-      color: #586578;
-      font-weight: normal;
-      text-align: left;
     }
 
     /* Pokémon Grid */
@@ -570,7 +563,7 @@
         
         <div class="header-panel brand-card">
           <div class="pokegrid-title">PokéGrid</div>
-          <div class="pokegrid-subtitle">Every trainer has a story. Here’s mine.</div>
+          <div class="pokegrid-subtitle">Every trainer has a story—here’s mine.</div>
         </div>
 
         <div class="header-panel trainer-card">
@@ -579,10 +572,11 @@
           </div>
 
           <div class="trainer-dossier">
-            <div class="info-pill" style="cursor: default;">
+            <div class="info-pill" id="trainer-pill">
               <span class="pill-label">TRAINER:</span>
-              <div class="dynamic-input-wrapper" id="name-wrapper" data-value="Your Name Here">
-                <input type="text" id="trainer-name-input" placeholder="Your Name Here" maxlength="24" autocomplete="off" />
+              <div class="trainer-input-container">
+                <span class="pill-value placeholder" id="trainer-name-display">Enter Name</span>
+                <input type="text" id="trainer-name-input" class="trainer-input-overlay" placeholder="Enter Name" maxlength="24" autocomplete="off" />
               </div>
             </div>
 

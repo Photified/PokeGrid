@@ -19,52 +19,40 @@ const GENERATIONS = [
 ];
 
 // --- Curated Restricted Pools (National Dex IDs) ---
-
-// All Starters & their full evolution lines (plus Partner Pikachu/Eevee)
 const STARTER_IDS = new Set([
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 25, 26, 133, // Gen 1 (Bulbasaur, Charmander, Squirtle lines + Pikachu/Eevee)
-  152, 153, 154, 155, 156, 157, 158, 159, 160, // Gen 2 (Chikorita, Cyndaquil, Totodile lines)
-  252, 253, 254, 255, 256, 257, 258, 259, 260, // Gen 3 (Treecko, Torchic, Mudkip lines)
-  387, 388, 389, 390, 391, 392, 393, 394, 395, // Gen 4 (Turtwig, Chimchar, Piplup lines)
-  495, 496, 497, 498, 499, 500, 501, 502, 503, // Gen 5 (Snivy, Tepig, Oshawott lines)
-  650, 651, 652, 653, 654, 655, 656, 657, 658, // Gen 6 (Chespin, Fennekin, Froakie lines)
-  722, 723, 724, 725, 726, 727, 728, 729, 730, // Gen 7 (Rowlet, Litten, Popplio lines)
-  810, 811, 812, 813, 814, 815, 816, 817, 818, // Gen 8 (Grookey, Scorbunny, Sobble lines)
-  906, 907, 908, 909, 910, 911, 912, 913, 914  // Gen 9 (Sprigatito, Fuecoco, Quaxly lines)
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 25, 26, 133,
+  152, 153, 154, 155, 156, 157, 158, 159, 160,
+  252, 253, 254, 255, 256, 257, 258, 259, 260,
+  387, 388, 389, 390, 391, 392, 393, 394, 395,
+  495, 496, 497, 498, 499, 500, 501, 502, 503,
+  650, 651, 652, 653, 654, 655, 656, 657, 658,
+  722, 723, 724, 725, 726, 727, 728, 729, 730,
+  810, 811, 812, 813, 814, 815, 816, 817, 818,
+  906, 907, 908, 909, 910, 911, 912, 913, 914
 ]);
 
-// Official Mythical Pokémon only
 const MYTHICAL_IDS = new Set([
-  151, // Mew
-  251, // Celebi
-  385, 386, // Jirachi, Deoxys
-  489, 490, 491, 492, 493, // Phione, Manaphy, Darkrai, Shaymin, Arceus
-  494, 647, 648, 649, // Victini, Keldeo, Meloetta, Genesect
-  719, 720, 721, // Diancie, Hoopa, Volcanion
-  801, 807, 808, 809, // Magearna, Marshadow, Zeraora, Meltan, Melmetal
-  893, // Zarude
-  1025 // Pecharunt
+  151, 251, 385, 386, 489, 490, 491, 492, 493,
+  494, 647, 648, 649, 719, 720, 721,
+  801, 807, 808, 809, 893, 1025
 ]);
 
-// Official Legendary Pokémon (Major Box Legends, Minor Trios/Quartets, Sub-Legends, Ultra Beasts, Paradox Legends)
 const LEGENDARY_IDS = new Set([
-  144, 145, 146, 150, // Birds, Mewtwo
-  243, 244, 245, 249, 250, // Beasts, Lugia, Ho-Oh
-  377, 378, 379, 380, 381, 382, 383, 384, // Regi trio, Lati@s, Weather trio
-  480, 481, 482, 483, 484, 485, 486, 487, 488, // Lake trio, Creation trio, Heatran, Regigigas, Cresselia
-  638, 639, 640, 641, 642, 643, 644, 645, 646, // Swords of Justice, Forces of Nature, Tao trio
-  716, 717, 718, // Aura trio (Xerneas, Yveltal, Zygarde)
-  772, 773, 785, 786, 787, 788, 789, 790, 791, 792, 793, 794, 795, 796, 797, 798, 799, 800, 803, 804, 805, 806, // Type: Null, Silvally, Tapus, Cosmog line, Light trio, Ultra Beasts
-  888, 889, 890, 891, 892, 894, 895, 896, 897, 898, 905, // Hero duo, Eternatus, Kubfu, Urshifu, Regieleki, Regidrago, Calyrex steeds, Enamorus
-  1001, 1002, 1003, 1004, 1007, 1008, 1014, 1015, 1016, 1017, 1024 // Treasures of Ruin, Koraidon, Miraidon, Loyal Three, Ogerpon, Terapagos
+  144, 145, 146, 150,
+  243, 244, 245, 249, 250,
+  377, 378, 379, 380, 381, 382, 383, 384,
+  480, 481, 482, 483, 484, 485, 486, 487, 488,
+  638, 639, 640, 641, 642, 643, 644, 645, 646,
+  716, 717, 718,
+  772, 773, 785, 786, 787, 788, 789, 790, 791, 792, 793, 794, 795, 796, 797, 798, 799, 800, 803, 804, 805, 806,
+  888, 889, 890, 891, 892, 894, 895, 896, 897, 898, 905,
+  1001, 1002, 1003, 1004, 1007, 1008, 1014, 1015, 1016, 1017, 1024
 ]);
 
-// Eevee and all 8 Evolutions
 const EEVEELUTION_IDS = new Set([
-  133, 134, 135, 136, 196, 197, 470, 471, 700 // Eevee, Vaporeon, Jolteon, Flareon, Espeon, Umbreon, Leafeon, Glaceon, Sylveon
+  133, 134, 135, 136, 196, 197, 470, 471, 700
 ]);
 
-// PokéAPI Verified Ball Item Endpoints
 const POKEBALLS = [
   { name: "Poké Ball", slug: "poke-ball" },
   { name: "Great Ball", slug: "great-ball" },
@@ -172,7 +160,7 @@ const modalCategoryFilterNote = document.getElementById("modal-category-filter-n
 
 // Trainer Inputs & Displays
 const trainerInput = document.getElementById("trainer-name-input");
-const nameWrapper = document.getElementById("name-wrapper");
+const trainerDisplay = document.getElementById("trainer-name-display");
 const firstGamePill = document.getElementById("first-game-pill");
 const firstGameDisplay = document.getElementById("first-game-display");
 const locationPill = document.getElementById("location-pill");
@@ -201,13 +189,27 @@ const locationCloseBtn = document.getElementById("location-close-btn");
 const ballCloseBtn = document.getElementById("ball-close-btn");
 const pwaInstallBtn = document.getElementById("pwa-install-btn");
 
-// 1. Trainer Name Setup
+// 1. Canvas-Safe Trainer Name Setup
 const savedName = localStorage.getItem("pokemon_grid_trainer") || "";
-trainerInput.value = savedName;
-nameWrapper.dataset.value = savedName || trainerInput.placeholder;
+if (savedName) {
+  trainerInput.value = savedName;
+  trainerDisplay.innerText = savedName;
+  trainerDisplay.classList.remove("placeholder");
+} else {
+  trainerDisplay.innerText = "Enter Name";
+  trainerDisplay.classList.add("placeholder");
+}
+
 trainerInput.addEventListener("input", (e) => {
-  nameWrapper.dataset.value = e.target.value || trainerInput.placeholder;
-  localStorage.setItem("pokemon_grid_trainer", e.target.value);
+  const val = e.target.value;
+  if (val.trim()) {
+    trainerDisplay.innerText = val;
+    trainerDisplay.classList.remove("placeholder");
+  } else {
+    trainerDisplay.innerText = "Enter Name";
+    trainerDisplay.classList.add("placeholder");
+  }
+  localStorage.setItem("pokemon_grid_trainer", val);
 });
 
 // 2. First Game Selection
@@ -388,10 +390,8 @@ function renderFilteredList() {
   const currentGen = GENERATIONS[activeGenIndex];
   const categoryName = categories[activeSlotIndex] || "";
 
-  // 1. Initial Generation Slice
   let list = allPokemon.filter((p) => p.id >= currentGen.start && p.id <= currentGen.end);
 
-  // 2. Apply Category Restrictions
   if (categoryName === "Best Starter") {
     list = list.filter((p) => STARTER_IDS.has(p.id));
   } else if (categoryName === "Best Mythical") {
@@ -402,7 +402,6 @@ function renderFilteredList() {
     list = list.filter((p) => EEVEELUTION_IDS.has(p.id));
   }
 
-  // 3. Search query filter
   if (query) {
     list = list.filter((p) => p.name.toLowerCase().includes(query) || String(p.id).includes(query));
   }
@@ -436,7 +435,6 @@ function openPicker(slotIdx) {
   const categoryName = categories[slotIdx];
   modalCategoryTitle.innerText = categoryName;
 
-  // Add contextual hint based on slot restrictions
   if (categoryName === "Best Starter") {
     modalCategoryFilterNote.innerText = "Showing official Starter Pokémon & evolutions only.";
   } else if (categoryName === "Best Mythical") {
@@ -449,7 +447,7 @@ function openPicker(slotIdx) {
     modalCategoryFilterNote.innerText = "All Pokémon eligible.";
   }
 
-  shinyToggle.checked = slotIdx === 11; // Auto-select for 'Best looking shiny'
+  shinyToggle.checked = slotIdx === 11;
   searchInput.value = "";
   renderFilteredList();
   pickerModal.classList.remove("hidden");
