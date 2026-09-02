@@ -359,6 +359,7 @@
       padding-bottom: 8px;
     }
     .modal-header h2 { font-size: 1.25rem; font-weight: 800; color: var(--poke-yellow); }
+    .modal-header-desc { font-size: 12px; color: #8fa0b5; font-style: italic; }
 
     .gen-tabs {
       display: grid;
@@ -569,7 +570,7 @@
         
         <div class="header-panel brand-card">
           <div class="pokegrid-title">PokéGrid</div>
-          <div class="pokegrid-subtitle">Every trainer has a story. Here’s mine.</div>
+          <div class="pokegrid-subtitle">Every trainer has a story—here’s mine.</div>
         </div>
 
         <div class="header-panel trainer-card">
@@ -606,7 +607,10 @@
   <div id="picker-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 id="modal-category-title">Select Pokémon</h2>
+        <div>
+          <h2 id="modal-category-title">Select Pokémon</h2>
+          <div id="modal-category-filter-note" class="modal-header-desc"></div>
+        </div>
       </div>
 
       <div class="gen-tabs" id="gen-tabs"></div>
@@ -674,7 +678,7 @@
         </div>
         <div class="how-to-step">
           <div class="step-badge">3</div>
-          <div>Click any card box to pick Pokémon or toggle Shiny variants.</div>
+          <div>Click any card box to pick Pokémon or toggle Shiny variants. Certain categories strictly feature their official rosters (Starters, Legendaries, Mythicals, Eeveelutions).</div>
         </div>
         <div class="how-to-step">
           <div class="step-badge">4</div>
