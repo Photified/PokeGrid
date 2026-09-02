@@ -451,7 +451,7 @@ function openPicker(slotIdx) {
   searchInput.value = "";
   renderFilteredList();
   pickerModal.classList.remove("hidden");
-  searchInput.focus();
+  // searchInput.focus() removed to prevent mobile keyboard pop-up
 }
 
 function selectPokemon(id) {
