@@ -1,13 +1,12 @@
 const categories = [
   "Favorite", "2nd Favorite", "Least Favorite", "Underrated", "Overrated",
-  "Best Starter", "Best Dynamax", "Best Mega", "Best Region Variant", "Best Eeveelution",
+  "Best Starter", "Best Dynamax", "Best Mega", "Best Legendary", "Best Eeveelution",
   "Would have as a pet", "Best looking shiny", "Idk why I like this, but I do",
-  "Has a personal story behind it", "Very nostalgic to me"
+  "Has personal story", "Very nostalgic to me"
 ];
 
-// Generation dex limits (All 1,025 Pokémon)
+// 9 Generations (3x3 Grid)
 const GENERATIONS = [
-  { gen: "All", start: 1, end: 1025 },
   { gen: "Gen I", start: 1, end: 151 },
   { gen: "Gen II", start: 152, end: 251 },
   { gen: "Gen III", start: 252, end: 386 },
@@ -38,6 +37,7 @@ const openSettingsBtn = document.getElementById("open-settings-btn");
 const settingsCloseBtn = document.getElementById("settings-close-btn");
 const modalCloseBtn = document.getElementById("modal-close-btn");
 const downloadBtn = document.getElementById("download-btn");
+const copyBtn = document.getElementById("copy-btn");
 const resetBtn = document.getElementById("reset-btn");
 const installWrapper = document.getElementById("install-wrapper");
 const pwaInstallBtn = document.getElementById("pwa-install-btn");
@@ -70,7 +70,7 @@ function renderGrid() {
   });
 }
 
-// 2. Fetch all 1,025 Pokémon entries
+// 2. Fetch Pokémon List
 async function fetchPokemonList() {
   try {
     const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025");
@@ -82,7 +82,7 @@ async function fetchPokemonList() {
   }
 }
 
-// 3. Tab Navigation & Filtering
+// 3. Tab Navigation & List
 function buildGenTabs() {
   genTabsEl.innerHTML = "";
   GENERATIONS.forEach((g, idx) => {
@@ -104,11 +104,10 @@ function renderFilteredList() {
   const query = searchInput.value.toLowerCase().trim();
   const currentGen = GENERATIONS[activeGenIndex];
 
-  // Filter within Gen bounds first (maintaining dex order)
   let list = allPokemon.filter(p => p.id >= currentGen.start && p.id <= currentGen.end);
 
   if (query) {
-    list = list.filter(p => p.name.toLowerCase().includes(query) || String(p.id).includes(query));
+    list = allPokemon.filter(p => p.name.toLowerCase().includes(query) || String(p.id).includes(query));
   }
 
   pokemonListEl.innerHTML = "";
@@ -121,7 +120,7 @@ function renderFilteredList() {
   });
 }
 
-// 4. Modal Triggers
+// 4. Modal Interactions
 function openPicker(slotIdx) {
   activeSlotIndex = slotIdx;
   modalCategoryTitle.innerText = categories[slotIdx];
@@ -149,7 +148,7 @@ modalCloseBtn.addEventListener("click", () => pickerModal.classList.add("hidden"
 openSettingsBtn.addEventListener("click", () => settingsModal.classList.remove("hidden"));
 settingsCloseBtn.addEventListener("click", () => settingsModal.classList.add("hidden"));
 
-// 5. Image Export
+// 5. Export Image (Download)
 downloadBtn.addEventListener("click", () => {
   const target = document.getElementById("grid-wrapper");
   html2canvas(target, { useCORS: true, backgroundColor: "#191e24", scale: 2 }).then((canvas) => {
@@ -160,7 +159,32 @@ downloadBtn.addEventListener("click", () => {
   });
 });
 
-// 6. Reset
+// 6. Copy Image to Clipboard
+copyBtn.addEventListener("click", async () => {
+  const target = document.getElementById("grid-wrapper");
+  const originalText = copyBtn.innerText;
+
+  try {
+    const canvas = await html2canvas(target, { useCORS: true, backgroundColor: "#191e24", scale: 2 });
+    canvas.toBlob(async (blob) => {
+      if (!blob) throw new Error("Canvas blob conversion failed");
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob })
+      ]);
+      copyBtn.innerText = "Copied!";
+      copyBtn.style.background = "#2e7d32";
+      setTimeout(() => {
+        copyBtn.innerText = originalText;
+        copyBtn.style.background = "";
+      }, 2000);
+    }, "image/png");
+  } catch (err) {
+    console.error("Failed to copy image to clipboard:", err);
+    alert("Could not copy directly to clipboard. Please use 'Export Image' instead.");
+  }
+});
+
+// 7. Reset
 resetBtn.addEventListener("click", () => {
   if (confirm("Reset all selections?")) {
     gridState = {};
@@ -169,7 +193,7 @@ resetBtn.addEventListener("click", () => {
   }
 });
 
-// 7. PWA Installation Handler
+// 8. PWA Install Prompt
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -196,7 +220,7 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// Initialize
+// Init
 buildGenTabs();
 fetchPokemonList();
 renderGrid();
