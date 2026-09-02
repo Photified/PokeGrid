@@ -5,7 +5,6 @@ const categories = [
   "Has personal story", "Very nostalgic to me"
 ];
 
-// 9 Generations (3x3 Grid)
 const GENERATIONS = [
   { gen: "Gen I", start: 1, end: 151 },
   { gen: "Gen II", start: 152, end: 251 },
@@ -24,23 +23,34 @@ let activeSlotIndex = null;
 let deferredPrompt = null;
 let gridState = JSON.parse(localStorage.getItem("pokemon_grid_data")) || {};
 
-// Elements
+// DOM Elements
 const gridEl = document.getElementById("pokemon-grid");
 const pickerModal = document.getElementById("picker-modal");
 const settingsModal = document.getElementById("settings-modal");
+const confirmModal = document.getElementById("confirm-modal");
 const searchInput = document.getElementById("search-input");
 const shinyToggle = document.getElementById("shiny-toggle");
 const pokemonListEl = document.getElementById("pokemon-list");
 const genTabsEl = document.getElementById("gen-tabs");
 const modalCategoryTitle = document.getElementById("modal-category-title");
+const trainerInput = document.getElementById("trainer-name-input");
+
 const openSettingsBtn = document.getElementById("open-settings-btn");
 const settingsCloseBtn = document.getElementById("settings-close-btn");
 const modalCloseBtn = document.getElementById("modal-close-btn");
 const downloadBtn = document.getElementById("download-btn");
 const copyBtn = document.getElementById("copy-btn");
-const resetBtn = document.getElementById("reset-btn");
-const installWrapper = document.getElementById("install-wrapper");
+
+const openResetBtn = document.getElementById("open-reset-btn");
+const cancelResetBtn = document.getElementById("cancel-reset-btn");
+const confirmResetBtn = document.getElementById("confirm-reset-btn");
 const pwaInstallBtn = document.getElementById("pwa-install-btn");
+
+// Trainer Name Persistence
+trainerInput.value = localStorage.getItem("pokemon_grid_trainer") || "";
+trainerInput.addEventListener("input", (e) => {
+  localStorage.setItem("pokemon_grid_trainer", e.target.value);
+});
 
 // 1. Render Grid
 function renderGrid() {
@@ -153,7 +163,8 @@ downloadBtn.addEventListener("click", () => {
   const target = document.getElementById("grid-wrapper");
   html2canvas(target, { useCORS: true, backgroundColor: "#191e24", scale: 2 }).then((canvas) => {
     const link = document.createElement("a");
-    link.download = "about-me-pokemon.png";
+    const trainerName = trainerInput.value.trim().replace(/\s+/g, "-") || "trainer";
+    link.download = `pokegrid-${trainerName}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
   });
@@ -167,7 +178,7 @@ copyBtn.addEventListener("click", async () => {
   try {
     const canvas = await html2canvas(target, { useCORS: true, backgroundColor: "#191e24", scale: 2 });
     canvas.toBlob(async (blob) => {
-      if (!blob) throw new Error("Canvas blob conversion failed");
+      if (!blob) throw new Error("Blob conversion failed");
       await navigator.clipboard.write([
         new ClipboardItem({ "image/png": blob })
       ]);
@@ -179,39 +190,57 @@ copyBtn.addEventListener("click", async () => {
       }, 2000);
     }, "image/png");
   } catch (err) {
-    console.error("Failed to copy image to clipboard:", err);
+    console.error("Copy failed:", err);
     alert("Could not copy directly to clipboard. Please use 'Export Image' instead.");
   }
 });
 
-// 7. Reset
-resetBtn.addEventListener("click", () => {
-  if (confirm("Reset all selections?")) {
-    gridState = {};
-    localStorage.removeItem("pokemon_grid_data");
-    renderGrid();
-  }
+// 7. Custom Styled Reset Dialog
+openResetBtn.addEventListener("click", () => {
+  confirmModal.classList.remove("hidden");
 });
 
-// 8. PWA Install Prompt
+cancelResetBtn.addEventListener("click", () => {
+  confirmModal.classList.add("hidden");
+});
+
+confirmResetBtn.addEventListener("click", () => {
+  gridState = {};
+  localStorage.removeItem("pokemon_grid_data");
+  renderGrid();
+  confirmModal.classList.add("hidden");
+});
+
+// 8. PWA Install Logic (Always visible button with fallback guidance)
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  installWrapper.classList.remove("hidden");
+  pwaInstallBtn.innerText = "Install PokeGrid App";
 });
 
 pwaInstallBtn.addEventListener("click", async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === "accepted") {
-    installWrapper.classList.add("hidden");
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      pwaInstallBtn.innerText = "App Installed!";
+      pwaInstallBtn.disabled = true;
+    }
+    deferredPrompt = null;
+  } else {
+    // If the browser already installed it, or doesn't support the automated prompt
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+      alert("To install on iOS: tap the Share button in Safari, then select 'Add to Home Screen'.");
+    } else {
+      alert("To install: use your browser's menu (top-right or address bar icon) and select 'Install PokeGrid' or 'Add to Home screen'.");
+    }
   }
-  deferredPrompt = null;
 });
 
 window.addEventListener("appinstalled", () => {
-  installWrapper.classList.add("hidden");
+  pwaInstallBtn.innerText = "App Installed!";
+  pwaInstallBtn.disabled = true;
 });
 
 if ("serviceWorker" in navigator) {
