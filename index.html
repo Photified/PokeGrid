@@ -121,25 +121,30 @@
     .pokegrid-title {
       font-size: 38px;
       font-weight: 900;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       color: var(--poke-yellow);
       text-shadow: 3px 3px 0 var(--poke-blue), -2px -2px 0 var(--poke-blue), 2px -2px 0 var(--poke-blue), -2px 2px 0 var(--poke-blue);
-      text-transform: uppercase;
+      text-transform: none; /* Preserves exact PokéGrid casing */
     }
+    
+    /* Centered Trainer Pill */
     .trainer-box {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       background: #12151b;
       border: 2px solid #2d3542;
-      padding: 6px 14px;
+      padding: 6px 18px;
       border-radius: 30px;
+      min-width: 260px;
     }
     .trainer-label {
       font-size: 11px;
       font-weight: 800;
       color: var(--poke-yellow);
       letter-spacing: 1px;
+      flex-shrink: 0;
     }
     .trainer-input {
       background: transparent;
@@ -148,10 +153,11 @@
       font-weight: 700;
       font-size: 14px;
       outline: none;
-      min-width: 160px;
-      text-align: left;
+      text-align: center; /* Centers the typed name */
+      width: 100%;
+      max-width: 160px;
     }
-    .trainer-input::placeholder { color: #586578; font-weight: normal; }
+    .trainer-input::placeholder { color: #586578; font-weight: normal; text-align: center; }
 
     .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
 
@@ -208,7 +214,7 @@
       text-overflow: ellipsis;
     }
 
-    /* Generic Modals */
+    /* Modals */
     .modal {
       position: fixed;
       inset: 0;
@@ -364,7 +370,7 @@
     .danger-btn { background: #b71c1c; border-color: #d32f2f; color: #fff; }
     .danger-btn:hover { background: #c62828; }
 
-    /* Reset Confirmation Modal Custom Styles */
+    /* Reset Confirmation Modal */
     .confirm-modal-content {
       max-width: 420px;
       text-align: center;
@@ -464,7 +470,7 @@
         </div>
       </div>
 
-      <button id="pwa-install-btn" class="settings-btn install-pwa-btn">Install App (PWA)</button>
+      <button id="pwa-install-btn" class="settings-btn install-pwa-btn">Install App</button>
       <button class="settings-btn" id="settings-close-btn">Back</button>
     </div>
   </div>
